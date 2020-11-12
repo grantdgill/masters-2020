@@ -250,9 +250,15 @@ var fantasy = fantasy || {};
 
 	Handlebars.registerHelper("getTodaysScore", function(competitor) {
         var linescores = competitor.linescores || [],
-            linescore  = linescores[linescores.length - 1] || {};
-            
-        return linescore.displayValue || '--';
+            linescore  = linescores[linescores.length - 1] || {},
+            score      = linescore.displayValue,
+            thru       = _.get(competitor, 'status.displayThru');
+
+        if (score && thru) {
+            return `${score} (${thru})`;
+        }
+
+        return score || '--';
 	});
 
 	Handlebars.registerHelper("getTotalPlayerScore", function(competitor) {
