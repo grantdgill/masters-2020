@@ -270,7 +270,7 @@ var fantasy = fantasy || {};
     });
     
     Handlebars.registerHelper("getFlag", function(competitor) {
-        var flag = _.get(competitor, 'flag.href');
+        var flag = _.get(competitor, 'athlete.flag.href');
         if (flag) {
             return `<img src="${flag}" />`;
         }
