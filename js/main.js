@@ -2,7 +2,8 @@ var fantasy = fantasy || {};
 
 (function($) {
 
-	var url = "https://api.espn.com/v1/sports/golf/pga/events/" + fantasy.config.tournamentId + "?apikey=" + fantasy.config.apiKey,
+    // var url = "https://api.espn.com/v2/sports/golf/pga/events/" + fantasy.config.tournamentId + "?apikey=" + fantasy.config.apiKey,
+    var url = `http://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&region=us&lang=en&event=${fantasy.config.tournamentId}`,
 		_positions = {},
 		headerTpl = Handlebars.compile($("#header-template").html()),
 		golferTpl = Handlebars.compile($("#golfers-template").html()),
@@ -26,10 +27,10 @@ var fantasy = fantasy || {};
 	}
 
 	function compareScore(a, b) {
-		if(a["score"] < b["score"]) {
+		if(a.score < b.score) {
 			return 1;
 		}
-		if(a["score"] > b["score"]) {
+		if(a.score > b.score) {
 			return -1;
 		}
 		
@@ -51,9 +52,10 @@ var fantasy = fantasy || {};
 	}
 
 	function _getIndividualScore(golferId) {
-		var total = 0;
-		var golfer = _positions[golferId];
-		if(golfer && golfer.place <= 25) {
+        var golfer = _positions[golferId],
+            total  = 0;
+            
+		if (golfer && golfer.place <= 25) {
 			total = _scoreForPlace(golfer.place);
 		}
 
@@ -164,47 +166,29 @@ var fantasy = fantasy || {};
 	}
 
 	function _getPositions(data) {
-		if(data && data.sports) {
-			var sport = data.sports[0];
+        var competitors = _.get(data, 'events.0.competitions.0.competitors', []),
+            uniqueIds   = _getUniqueGolfers();
 
-			if(sport && sport.leagues) {
-				var league = sport.leagues[0];
+        competitors.forEach(function(competitor) {
+            var athlete     = competitor.athlete || {},
+                athleteId   = athlete.id,
+                score;
+            if (uniqueIds.indexOf(athleteId) > -1) {
+                score = competitor.score || {};
+                status = competitor.status || {};
+                _positions[athleteId] = {
+                    id      : athleteId,
+                    name    : athlete.displayName,
+                    place   : parseInt(_.get(competitor, 'status.position.id', 26), 10),
+                    score   : _.get(competitor, 'score.displayValue', '--'),
+                    madeCut : true // @TODO
+                };
+            }
+        });
 
-				if(league && league.events) {
-					var event = league.events[0];
+        _competitors = competitors;
 
-					if(event && event.competitions) {
-						var tournament = event.competitions[0];
 
-						if(tournament && tournament.competitors) {
-							var golfers = tournament.competitors;
-
-							_competitors = tournament.competitors;
-
-							var athlete;
-
-							golfers.forEach(function(golfer) {
-
-								athlete = golfer.athlete;
-
-								var _uniqueGolfers = _getUniqueGolfers();
-
-								if(_uniqueGolfers.indexOf(athlete.id) > -1) {
-									var madeCut = !fantasy.config.showCut || athlete.stats.madeCut;
-									_positions[athlete.id] = {
-										id:athlete.id,
-										name:athlete.displayName,
-										place:golfer.place,
-										score:golfer.score,
-										madeCut:madeCut
-									};
-								}
-							});
-						}
-					}
-				}
-			}
-		}
 	}
 
 	function updateTimeStamp() {
@@ -257,30 +241,12 @@ var fantasy = fantasy || {};
 	}
 
 	function _getUniqueGolfers() {
-		if(this.memo) {
-			return this.memo;
-		}
-
 		var all = [];
 		fantasy.config.teams.forEach(function(team) {
-			team.golfers.forEach(function(id) {
-				all.push(id);
-			});
-		});
-
-		// get unique
-		var u = {}, a = [];
-		for(var i = 0, l = all.length; i < l; ++i){
-			if(u.hasOwnProperty(all[i])) {
-		 		continue;
-			}
-			a.push(all[i]);
-			u[all[i]] = 1;
-		}
-
-
-		this.memo = a;
-		return a;
+            all = _.concat(all, team.golfers);
+        });
+        
+        return _.uniq(all);
 	}
 
 	function _init() {
@@ -297,59 +263,22 @@ var fantasy = fantasy || {};
 	}
 
 	Handlebars.registerHelper("getPosition", function(competitor) {
-		var pos = "--";
-		if(competitor && competitor.athlete && competitor.athlete.stats) {
-			pos = competitor.athlete.stats.currentPosition;
-
-			if(competitor.athlete.stats.wasTied === true) {
-				pos = "T" + pos;
-			}
-		}
-
-		return pos;
+        return _.get(competitor, 'status.position.displayName', '--');
 	});
 
 	Handlebars.registerHelper("getTodaysScore", function(competitor) {
-		var score = "--";
-
-		if(competitor && competitor.status) {
-			score = competitor.status.detail;
-		}
-
-		return score;
+        return _.get(competitor, 'score.displayValue', '--');
 	});
 
 	Handlebars.registerHelper("getTotalPlayerScore", function(competitor) {
-		var score = "--";
-
-		if(competitor) {
-			score = competitor.score;
-
-			if(competitor.score > 0) {
-				score = competitor.score;
-			} else if(competitor.score === 0) {
-				score = "E";
-			}
-
-			if(competitor.status.state === "pre") {
-				score += " " + competitor.status.shortDetail;
-			} else if(competitor.athlete && competitor.athlete.stats) {
-				if(competitor.athlete.stats.madeCut === false) {
-					score += " (CUT)";
-				}
-			}
-		}
-
-		return score;
+       return _.get(competitor, 'score.displayValue', '--');
 	});
 
 	Handlebars.registerHelper("getPlayerClass", function(competitor) {
-		if(competitor && competitor.athlete) {
-			var id = competitor.athlete.id;
-			if(_positions[id]) {
-				return "highlight";
-			}
-		}
+        var athleteId = _.get(competitor, 'athlete.id');
+        if (_positions[athleteId]) {
+            return 'highlight';
+        }
 	});
 
 	Handlebars.registerHelper("getPoints", function(player) {
