@@ -171,8 +171,6 @@ var fantasy = fantasy || {};
         });
 
         _competitors = competitors;
-
-
 	}
 
 	function updateTimeStamp() {
@@ -255,7 +253,10 @@ var fantasy = fantasy || {};
 	});
 
 	Handlebars.registerHelper("getTotalPlayerScore", function(competitor) {
-       return _.get(competitor, 'score.displayValue', '--');
+        var statistics = competitor.statistics || [],
+            scoreToPar = _.find(statistics, { name: 'scoreToPar' }),
+
+        return scoreToPar && scoreToPar.displayValue || '--';
 	});
 
 	Handlebars.registerHelper("getPlayerClass", function(competitor) {
