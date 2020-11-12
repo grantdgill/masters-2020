@@ -249,12 +249,18 @@ var fantasy = fantasy || {};
 	});
 
 	Handlebars.registerHelper("getTodaysScore", function(competitor) {
-        return _.get(competitor, 'score.displayValue', '--');
+        // return _.get(competitor, 'score.displayValue', '--');
+
+        // @TODO update
+        var statistics = competitor.statistics || [],
+            scoreToPar = _.find(statistics, { name: 'scoreToPar' });
+
+        return scoreToPar && scoreToPar.displayValue || '--';
 	});
 
 	Handlebars.registerHelper("getTotalPlayerScore", function(competitor) {
         var statistics = competitor.statistics || [],
-            scoreToPar = _.find(statistics, { name: 'scoreToPar' }),
+            scoreToPar = _.find(statistics, { name: 'scoreToPar' });
 
         return scoreToPar && scoreToPar.displayValue || '--';
 	});
