@@ -255,7 +255,6 @@ var fantasy = fantasy || {};
             thru       = _.get(competitor, 'status.displayThru');
 
         if (score && thru) {
-
             if (thru === '18') {
                 thru = 'F';
             }
