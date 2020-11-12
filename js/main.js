@@ -250,7 +250,7 @@ var fantasy = fantasy || {};
 
 	Handlebars.registerHelper("getTodaysScore", function(competitor) {
         var linescores = competitor.linescores || [],
-            linescore  = linescores[linescores.length - 1] || {},
+            linescore  = linescores[linescores.length - 1] || {};
             
         return linescore.displayValue || '--';
 	});
