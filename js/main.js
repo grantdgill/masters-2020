@@ -272,7 +272,7 @@ var fantasy = fantasy || {};
     Handlebars.registerHelper("getFlag", function(competitor) {
         var flag = _.get(competitor, 'flag.href');
         if (flag) {
-            return `<img src="${flag}" />';
+            return `<img src="${flag}" />`;
         }
 	});
 
