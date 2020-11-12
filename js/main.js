@@ -267,6 +267,13 @@ var fantasy = fantasy || {};
         if (_positions[athleteId]) {
             return 'highlight';
         }
+    });
+    
+    Handlebars.registerHelper("getFlag", function(competitor) {
+        var flag = _.get(competitor, 'flag.href');
+        if (flag) {
+            return `<img src="${flag}" />';
+        }
 	});
 
 	Handlebars.registerHelper("getPoints", function(player) {

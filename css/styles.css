@@ -178,3 +178,7 @@ table tr.highlight {
 		line-height:44px;
 	}
 }
+
+.flag {
+    width: 20px;
+}
