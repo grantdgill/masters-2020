@@ -14,26 +14,16 @@ var fantasy = fantasy || {};
 		_leaderboards = $(".leaderboard");
 
 	function compare(a, b) {
-		if(a["totalScore"] < b["totalScore"]) {
-			return 1;
-		}
-		if(a["totalScore"] > b["totalScore"]) {
-			return -1;
-		}
-		
-		return 0;
+        return b.totalScore - a.totalScore;
 	}
 
 	function compareScore(a, b) {
-		if(a.score < b.score) {
-			return 1;
-		}
-		if(a.score > b.score) {
-			return -1;
-		}
-		
-		return 0;
-	}
+		return b.score - a.score;
+    }
+    
+    function sortOrderComparator(a, b) {
+        return a.sortOrder - b.sortOrder;
+    }
 
 	function _getGolfers(callback) {
 		$.ajax({
@@ -78,15 +68,11 @@ var fantasy = fantasy || {};
 
 	function _getIndividualDisplay(golferId) {
 		var golfer = _positions[golferId];
-		var obj = {};
-		if(golfer) {
-			obj.name = golfer.name;
-			obj.score = _getIndividualScore(golferId);
-			obj.id = golferId;
-			obj.madeCut = golfer.madeCut;
+		if (golfer) {
+            return _.assign({}, golfer, {
+                score : _getIndividualScore(golferId)
+            });
 		}
-
-		return obj;
 	}
 
 	function _scoreForPlace(place) {
@@ -167,13 +153,11 @@ var fantasy = fantasy || {};
         var competitors = _.get(data, 'events.0.competitions.0.competitors', []),
             uniqueIds   = _getUniqueGolfers();
 
-        competitors.forEach(function(competitor) {
+        competitors.sort(sortOrderComparator).forEach(function(competitor) {
             var athlete     = competitor.athlete || {},
-                athleteId   = athlete.id,
-                score;
+                athleteId   = athlete.id;
+
             if (uniqueIds.indexOf(athleteId) > -1) {
-                score = competitor.score || {};
-                status = competitor.status || {};
                 _positions[athleteId] = {
                     id      : athleteId,
                     name    : athlete.displayName,
