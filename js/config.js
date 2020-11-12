@@ -66,15 +66,6 @@ fantasy.config = {
 	tournamentId: 401219478,
 	teams: [
 		{
-			name: 'Grant',
-			golfers: [
-				GOLFERS.XANDER_SCHAUFFELE,
-				GOLFERS.DUSTIN_JOHNSON,
-				GOLFERS.JON_RAHM,
-                GOLFERS.DANIEL_BERGER,
-                GOLFERS.SUNGJAE_IM
-			]
-		}, {
             name: 'Meagan',
             golfers: [
                 GOLFERS.HIDEKI_MATSUYAMA,
@@ -209,7 +200,16 @@ fantasy.config = {
                 GOLFERS.XANDER_SCHAUFFELE,
                 GOLFERS.RORY_MCILROY
             ]
-        }
+        }, {
+			name: 'Grant',
+			golfers: [
+				GOLFERS.XANDER_SCHAUFFELE,
+				GOLFERS.DUSTIN_JOHNSON,
+				GOLFERS.JON_RAHM,
+                GOLFERS.DANIEL_BERGER,
+                GOLFERS.SUNGJAE_IM
+			]
+		}
 	],
 	firstPlaceValue: 50,
 	showCut: false,
