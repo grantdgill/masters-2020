@@ -1,9 +1,7 @@
 var fantasy = fantasy || {};
 
 (function($) {
-
-    // var url = "https://api.espn.com/v2/sports/golf/pga/events/" + fantasy.config.tournamentId + "?apikey=" + fantasy.config.apiKey,
-    var url = `http://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&region=us&lang=en&event=${fantasy.config.tournamentId}`,
+    var url = `https://site.web.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga&region=us&lang=en&event=${fantasy.config.tournamentId}`,
 		_positions = {},
 		headerTpl = Handlebars.compile($("#header-template").html()),
 		golferTpl = Handlebars.compile($("#golfers-template").html()),
