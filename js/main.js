@@ -72,8 +72,10 @@ var fantasy = fantasy || {};
             return _.assign({}, golfer, {
                 score : _getIndividualScore(golferId)
             });
-		}
-	}
+        }
+        
+        return {};
+    }
 
 	function _scoreForPlace(place) {
 		var score = 0;
