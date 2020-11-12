@@ -249,13 +249,10 @@ var fantasy = fantasy || {};
 	});
 
 	Handlebars.registerHelper("getTodaysScore", function(competitor) {
-        // return _.get(competitor, 'score.displayValue', '--');
-
-        // @TODO update
-        var statistics = competitor.statistics || [],
-            scoreToPar = _.find(statistics, { name: 'scoreToPar' });
-
-        return scoreToPar && scoreToPar.displayValue || '--';
+        var linescores = competitor.linescores || [],
+            linescore  = linescores[linescores.length - 1] || {},
+            
+        return linescore.displayValue || '--';
 	});
 
 	Handlebars.registerHelper("getTotalPlayerScore", function(competitor) {
