@@ -163,7 +163,7 @@ var fantasy = fantasy || {};
                 _positions[athleteId] = {
                     id      : athleteId,
                     name    : athlete.displayName,
-                    place   : parseInt(_.get(competitor, 'status.position.id') || 26, 10),
+                    place   : parseInt(_.get(competitor, 'status.position.id'), 10) || 100, // handle competitors with position id 0
                     score   : _.get(competitor, 'score.displayValue', '--'),
                     madeCut : true // @TODO
                 };
