@@ -268,13 +268,6 @@ var fantasy = fantasy || {};
             return 'highlight';
         }
     });
-    
-    Handlebars.registerHelper("getFlag", function(competitor) {
-        var flag = _.get(competitor, 'athlete.flag.href');
-        if (flag) {
-            return `<img src="${flag}" />`;
-        }
-	});
 
 	Handlebars.registerHelper("getPoints", function(player) {
 		return player.score === 1 ? "pt" : "pts";
